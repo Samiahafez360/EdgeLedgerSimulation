@@ -6,7 +6,7 @@ public class Simulation {
 	int difficulty;
 	// in hours
 	int simTime;
-// 	public Simulation(){
+ 	public Simulation(){
 		
 	}
 	public void startSimulation(){
