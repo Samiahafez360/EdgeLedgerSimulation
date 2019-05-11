@@ -1,11 +1,10 @@
-import java.io.FileInputStream;
-import java.io.IOException;
+
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.Random;
 
 import org.uncommons.maths.random.BinomialGenerator;
-
+import org.uncommons.maths.random.ExponentialGenerator;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 
 public class FindtheNonceGenerator {
@@ -16,50 +15,48 @@ public class FindtheNonceGenerator {
 		static double p;
 		
 		static FindtheNonceGenerator instance;
-		static Random rng;
-		static int noftrials;
+		static Random rng1;
+		static Random rng2;
+		
+		static long noftrials;
 		
 		static BinomialGenerator  nonceFindGen;
+		static ExponentialGenerator timeToFindNonce;
 		Properties prop;
 		
-		public static FindtheNonceGenerator getIntance() {
+		public static FindtheNonceGenerator getIntance(long range) {
 			if (instance == null) {
-				instance = new FindtheNonceGenerator();
+				instance = new FindtheNonceGenerator(range);
 			}
 			return instance;
 		}
 		
 		
-		private FindtheNonceGenerator() {
-			rng = new MersenneTwisterRNG();
+		private FindtheNonceGenerator(long range) {
+			rng1 = new MersenneTwisterRNG();
+			rng2 = new MersenneTwisterRNG();
+			
 			prop = new Properties();
 			
 			InputStream input = null;
 
-		    try {
-
-		        input = new FileInputStream(new java.io.File( "." ).getCanonicalPath()+"\\src\\config.properties");
-	            prop.load(input);
-	            int diff = Integer.parseInt(prop.getProperty("Difficulty"));
-	            System.out.println((2^diff));
-	            p = 1.0/(Math.pow(2,diff));
-	            System.out.println(p);
-	    		noftrials =Integer.parseInt(prop.getProperty("Range"));
-	            input.close();
-		    }catch (IOException ex) {
-		        ex.printStackTrace();
-		    } finally {
-		       
-		    }
-		        // load a properties file
-		        
-			
-		    nonceFindGen = new BinomialGenerator(noftrials,p, rng);
+		    int diff = Integer.parseInt(SimulationProperties.getInstance().getParameter("Difficulty"));
+	        //System.out.println((2^diff));
+	        p = 1.0/(Math.pow(2,diff));
+	        //System.out.println(p);
+	    	noftrials =range;
+	    	nonceFindGen = new BinomialGenerator((int) noftrials,p, rng1);
+	        
 		}
 		
 		
 		public  int isNonceFound() {
-			return nonceFindGen.nextValue() ;
+			int found = nonceFindGen.nextValue();
+			timeToFindNonce = new ExponentialGenerator(found*1.0/noftrials,rng2);
+			return  found;
+		}
+		public double timetoNonce() {
+			return timeToFindNonce.nextValue();
 		}
 		
 		public static void main(String[] args) {
@@ -67,7 +64,7 @@ public class FindtheNonceGenerator {
 		
 			int x= 100;
 			while(x>0) {
-				System.out.println (FindtheNonceGenerator.getIntance().isNonceFound());
+				//System.out.println (FindtheNonceGenerator.getIntance(1024).isNonceFound());
 				x--;
 			}
 		}

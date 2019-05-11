@@ -33,21 +33,10 @@ public class StayTimeRandomGenerator {
 		rng = new MersenneTwisterRNG();
 		prop = new Properties();
 		
-		InputStream input = null;
-
-	    try {
-
-	        input = new FileInputStream(new java.io.File( "." ).getCanonicalPath()+"\\src\\config.properties");
-            prop.load(input);
-            oneMinute = Long.parseLong(prop.getProperty("OneMinDuration"));
-    		rate = Long.parseLong(prop.getProperty("LabdaPoisson4Stay"));
-            input.close();
-	    }catch (IOException ex) {
-	        ex.printStackTrace();
-	    } finally {
-	       
-	    }
-	        // load a properties file
+		
+        oneMinute = Long.parseLong(SimulationProperties.getInstance().getParameter("OneMinDuration"));
+		rate = Long.parseLong(SimulationProperties.getInstance().getParameter("LabdaPoisson4Stay"));
+        // load a properties file
 	        
 		
 		helperStayTimeGen = new ExponentialGenerator(rate, rng);
