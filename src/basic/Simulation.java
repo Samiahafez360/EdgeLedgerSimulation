@@ -1,3 +1,4 @@
+package basic;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
@@ -23,11 +24,14 @@ public class Simulation {
 		PriorityQueue<Helper> helpers = new PriorityQueue<Helper>();
 		int i = startingNofHelpers;
 		//setting up calc times
+		double time = 0;
+		
 		while (i>0) {
+			time +=1;
 			Helper h = new Helper();
 			//System.out.println("Helpers ... ");
 			//Calculate when the helper will finish
-			h.calcMiningTime(c.getIndividualRange());
+			h.calcMiningTime(time, c.getIndividualRange());
 			helpers.add(h);
 			i--;
 		}
@@ -36,10 +40,11 @@ public class Simulation {
 		while(h!=null) {
 			try {
 				Thread.sleep((long) Math.ceil(
-						h.getMiningTime()/Long.parseLong(
+						(h.getMiningTime())/Long.parseLong(
 								SimulationProperties.
 								getInstance().
 								getParameter("OneMinDuration"))));
+				time+=h.getMiningTime();
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -64,20 +69,21 @@ public class Simulation {
 		PriorityQueue<Helper> helpersqueue = new PriorityQueue<Helper>();
 		ArrayList<Helper> helperslist = new ArrayList<Helper>();
 		int i = startingNofHelpers;
-		
+		long time = 0;
 		
 		//Assigning the helpers 
 		while (i>0) {
 			Helper h = new Helper();
 			//System.out.println("Helpers ... ");
 			//Calculate when the helper will finish
-			h.calcMiningTime(c.getIndividualRange());
+			h.calcMiningTime(time,c.getIndividualRange());
 			helpersqueue.add(h);
 			helperslist.add(h);
 			i--;
+			time ++;
 		}
 		
-		long time = 0;
+		
 		Helper h;
 		while (time <simTime) {
 			//mining one block
@@ -89,9 +95,10 @@ public class Simulation {
 				//System.out.println("Helpers ... ");
 				//Calculate when the helper will finish
 				//TODO we have to embed the calculation of semitrusted
-				h.calcMiningTime(indvidualrange);
+				h.calcMiningTime(time, indvidualrange);
 				helpersqueue.add(h);
 				i--;
+				time ++;
 			}
 			//start mining
 			i = startingNofHelpers;
@@ -116,11 +123,11 @@ public class Simulation {
 	}
 	public static void main (String[] args) {
 		Simulation s = new Simulation();
-		while(s.startingNofHelpers<=1000) {
+		while(s.startingNofHelpers<=200) {
 			double avofminingtime= 0;
-			for (int i = 0; i<1; i++) {
-				//avofminingtime += s.startSimulation();
-				s.startSimulation_exp2();
+			for (int i = 0; i<100; i++) {
+				avofminingtime += s.startSimulation();
+				//s.startSimulation_exp2();
 			}
 			avofminingtime= avofminingtime/100;
 			System.out.println (""+s.startingNofHelpers+"\t"+avofminingtime);
