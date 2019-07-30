@@ -1,13 +1,13 @@
 package basic;
 
 public class Helper implements Comparable<Helper> {
-	double timeInNetwork;
-	double degreeoftrust;
-	double finishminingtime;
-	double nonceProb;
-	private double maxTime;
-	private double intervalTimetrusted;
-	private double intervalTimenottrusted;
+	protected double timeInNetwork;
+	protected double degreeoftrust;
+	protected double finishminingtime;
+	protected double nonceProb;
+	protected double maxTime;
+	protected double intervalTimetrusted;
+	protected double intervalTimenottrusted;
 	
 	public Helper() {
 		timeInNetwork = StayTimeRandomGenerator.getIntance().getNextStayTime();
