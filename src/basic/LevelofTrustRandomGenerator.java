@@ -19,6 +19,7 @@ public class LevelofTrustRandomGenerator {
 	private LevelofTrustRandomGenerator() {
 		rLevelOfTrust = new Random();
 		rMalicious = new MersenneTwisterRNG();
+		
 	}
 	public  double getNextTrustLevel() {
 		return rLevelOfTrust.nextFloat();

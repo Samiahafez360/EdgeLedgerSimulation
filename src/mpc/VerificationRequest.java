@@ -2,13 +2,13 @@ package mpc;
 
 class VerificationRequest {
 
-	int helperid;
+	MPCHelper helper;
 	
 	int range;
 	int percentage;
-	public VerificationRequest(int helperid, int range, int percentage) {
+	public VerificationRequest(MPCHelper helper, int range, int percentage) {
 		super();
-		this.helperid = helperid;
+		this.helper = helper;
 		this.range = range;
 		this.percentage = percentage;
 	}

@@ -11,6 +11,7 @@ public class Controller {
 		this.startingNofHelpers = startingNofHelpers;
 		range = (long) Math.pow(2, diff+8);
 	}
+	
 	public long getIndividualRange() {
 		if (fixed) {
 			return (long)(Math.ceil(1.0*range/startingNofHelpers/32)*32);
