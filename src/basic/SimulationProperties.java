@@ -34,7 +34,7 @@ public class SimulationProperties {
 	public String getParameter(String parameterName) {
 		
 		String s= prop.getProperty(parameterName,"600000");
-		//System.out.println(s);
+		System.out.println(s);
 		return s;
 	}
 }

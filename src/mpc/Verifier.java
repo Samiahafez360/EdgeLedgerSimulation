@@ -14,12 +14,16 @@ public class Verifier implements Comparable<Verifier>{
 		this.id=id;
 		
 		malicious = LevelofTrustRandomGenerator.getIntance().isMalicioushelper();	
+		verificationRequests = new ArrayList<VerificationRequest>();
 	}
 	
 	
-	
+	ArrayList<VerificationRequest> verificationRequests;
 	double finishverifyingtime;
-	public ArrayList<VerificationResponse> verify(double startverifying, ArrayList<VerificationRequest> verificationRequests)
+	public void addverificationrequest(VerificationRequest r) {
+		verificationRequests.add(r);
+	}
+	public ArrayList<VerificationResponse> verify(double startverifying)
 	{
 		ArrayList<VerificationResponse> verificationresult = new ArrayList<VerificationResponse>(verificationRequests.size());
 		int maxops =0;
