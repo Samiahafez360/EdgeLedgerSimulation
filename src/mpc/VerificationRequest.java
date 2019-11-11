@@ -5,8 +5,8 @@ class VerificationRequest {
 	MPCHelper helper;
 	
 	int range;
-	int percentage;
-	public VerificationRequest(MPCHelper helper, int range, int percentage) {
+	double percentage;
+	public VerificationRequest(MPCHelper helper, int range, double percentage) {
 		super();
 		this.helper = helper;
 		this.range = range;

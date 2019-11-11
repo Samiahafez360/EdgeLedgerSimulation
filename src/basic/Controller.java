@@ -4,7 +4,7 @@ public class Controller {
 
 	Long range;
 	boolean fixed;
-	int startingNofHelpers;
+	protected int startingNofHelpers;
 	public Controller(int startingNofHelpers) {
 		int diff = Integer.parseInt(SimulationProperties.getInstance().getParameter("Difficulty"));
 		fixed = Boolean.parseBoolean(SimulationProperties.getInstance().getParameter("Fixed"));

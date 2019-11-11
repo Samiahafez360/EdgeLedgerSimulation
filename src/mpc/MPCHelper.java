@@ -12,11 +12,12 @@ import basic.StayTimeRandomGenerator;
 
 public class MPCHelper extends Helper {
 	int id;
-	double SHA_ops[];
+	double SHA_ops[] = new double[6];
 	boolean malicious;
 	long numberofparticipations;
 	long numberofcorrectlyproven;
 	private Random rMaliciousbehavior;
+	int myRep = 0;
 	
 	public MPCHelper(int id) {
 		this.id = id;
@@ -36,6 +37,7 @@ public class MPCHelper extends Helper {
 		SHA_ops[5] = Double.parseDouble(SimulationProperties.getInstance().getParameter("SHA_op5"));
 		malicious = LevelofTrustRandomGenerator.getIntance().isMalicioushelper();
 		rMaliciousbehavior =  new MersenneTwisterRNG();
+		System.out.println("helper: " +id+"   "+(malicious?"malicious":"honest")+"   Staying till"+ timeInNetwork);
 	}
 	double getCollectiveSHA() {
 		double sum = 0;
@@ -46,6 +48,12 @@ public class MPCHelper extends Helper {
 		return sum;
 	}
 	
+	double miningtime;
+	boolean stayingforthisrange(long individualRange) {
+		if (getCollectiveSHA()*individualRange+SimulationClock.getInstance().getTime() > timeInNetwork) return false;
+		else return true;
+		
+	}
 	
 	// get the probability to find the nonce, then the proper nonce (randomly).
 	// multiply the nonce index by the SHA Collective time.
@@ -60,11 +68,16 @@ public class MPCHelper extends Helper {
 		
 		if (nonceProb>0) {
 			while (nonce> individualRange) nonce = (int) (FindtheNonceGenerator.getIntance(individualRange).timetoNonce()/getCollectiveSHA());
-			finishminingtime = startingtime + nonce * getCollectiveSHA();
+			miningtime =  nonce * getCollectiveSHA();
 		}else {
-			finishminingtime = maxTime;
+			miningtime = maxTime;
 		}
-		return finishminingtime;
+		finishminingtime+= miningtime;
+		//System.out.println("hello"+getMiningTime());
+		return miningtime;
+	}
+	public double getonlyMiningTime() {
+		return miningtime;
 	}
 	private boolean actMaliciously() {
 		int val = rMaliciousbehavior.nextInt(10);
@@ -72,31 +85,42 @@ public class MPCHelper extends Helper {
 		if (val <probX10) {
 			return true;
 		}else {
+			//System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   MAAAAAAAAAAAAAAAAAAALLLLLLIIICCCCCOOOOUUUUUUUSSSSS  GOT CAUGHT");
 			return false;
 		}
 	}
+	// nofops is the number of ops to be proved (already max * %)
 	public boolean prove(int nofops) {
 		
-			
+		System.err.println("proving"+nofops+" operations");
+		boolean result = true;	
+		
 		if (!malicious) {
-			//TODO wait for proving time which is a memory access time
-			return true;
+			// wait for proving time which is a memory access time
+			// the proving time is already added in the caller 
+			
+			result= true;
 		}else {
 			//TODO the algorithm for improving reputation then execute the maliciousness
 			//did the helper actually proved that.
-			int mal_threshold = Integer.parseInt(SimulationProperties.getInstance().getParameter("mal_threshold")); 
-			if (numberofcorrectlyproven> mal_threshold) {
-				//getting caught
-				if (actMaliciously()) return false;
-				//not caught
-				else return true;
-				
-			}else {
-				numberofcorrectlyproven++;
-				return true;
-			}
 			
+			if (SimulationProperties.getInstance().getSimulationMode() == 1) {
+				// the helper is not very smart
+				result= ! actMaliciously();
+				
+			}else if (SimulationProperties.getInstance().getSimulationMode() == 2) {
+				// the helper is smart it will act mallicously only if its reputation is max
+				int mal_threshold = Integer.parseInt(SimulationProperties.getInstance().getParameter("mal_threshold")); 
+				if (numberofcorrectlyproven> mal_threshold) {
+					//getting caught
+					result= !actMaliciously();					
+				}else {
+					numberofcorrectlyproven++;
+					result= true;
+				}
+			
+			}		
 		}
-		
+		return result;
 	}
 }

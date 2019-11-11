@@ -2,7 +2,7 @@ package mpc;
 
 public class ReputationTableEntry implements Comparable<ReputationTableEntry>{
 	int helperid ;
-	int reputation;
+	double reputation;
 	public int getHelperid() {
 		return helperid;
 	}
@@ -14,7 +14,7 @@ public class ReputationTableEntry implements Comparable<ReputationTableEntry>{
 	public void setHelperid(int helperid) {
 		this.helperid = helperid;
 	}
-	public int getReputation() {
+	public double getReputation() {
 		return reputation;
 	}
 	public void setReputation(int reputation) {

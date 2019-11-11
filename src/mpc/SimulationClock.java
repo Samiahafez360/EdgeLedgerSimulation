@@ -17,8 +17,10 @@ public class SimulationClock {
 	public double getTime() {
 		return time;
 	}
-	public void advanceTime(double time) {
-		this.time += time;
+	public void advanceTime(double timeadd) {
+		System.out.println("Advancing time by"+timeadd);
+		this.time += timeadd;
+		System.out.println("time now is "+time);
 	}
 	
 }

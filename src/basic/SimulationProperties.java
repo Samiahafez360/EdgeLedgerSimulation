@@ -30,11 +30,13 @@ public class SimulationProperties {
 	       
 	    }
 	}
-	
+	public int getSimulationMode() {
+		return Integer.parseInt(getParameter("SMode"));
+	}
 	public String getParameter(String parameterName) {
 		
 		String s= prop.getProperty(parameterName,"600000");
-		System.out.println(s);
+		//System.out.println(parameterName+"  from the properties file  "+s);
 		return s;
 	}
 }

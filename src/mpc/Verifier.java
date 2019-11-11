@@ -25,18 +25,26 @@ public class Verifier implements Comparable<Verifier>{
 	}
 	public ArrayList<VerificationResponse> verify(double startverifying)
 	{
+		System.out.println("***************Verifier "+id +" is verifying");
+		
+		
 		ArrayList<VerificationResponse> verificationresult = new ArrayList<VerificationResponse>(verificationRequests.size());
+		
+		double prove_single_op = Double.parseDouble(SimulationProperties.getInstance().getParameter("single_op_proving_time"));
+		
 		int maxops =0;
 		for (int i = 0; i<verificationRequests.size();i++) {
 			MPCHelper helper = verificationRequests.get(i).helper;
-			int nofops = verificationRequests.get(i).percentage *verificationRequests.get(i).range / 100;
+			int nofops =(int) Math.ceil( verificationRequests.get(i).percentage *verificationRequests.get(i).range / 100);
+			System.out.println ("Helper"+ helper.id+" operations are being verified only "+verificationRequests.get(i).percentage+"% of the operations are verified");
 			if (maxops<nofops)maxops=nofops;
 			boolean verified = helper.prove(nofops);
-			verificationresult.add(new VerificationResponse(helper.id, verified?1:0));
+			verificationresult.add(new VerificationResponse(helper.id, verified?100:0));
+			verificationRequests.remove(i);
 		}
-		double prove_single_op = Double.parseDouble(SimulationProperties.getInstance().getParameter("single_op_proving_time"));
 		finishverifyingtime = startverifying+ prove_single_op*maxops;
 		
+		SimulationClock.getInstance().advanceTime(prove_single_op*maxops);
 		return verificationresult;
 	}
 	@Override
