@@ -41,7 +41,7 @@ public class MPCController extends Controller {
 	int full_rep;
 	//Reputation table 
 	ArrayList<ReputationTableEntry> reptable;
-	Map<Integer, String> reputationhistory;
+	Map<Double, String> reputationhistory;
 	//Miners
 	ArrayList<MPCHelper>miners;
 	int minerssize;
@@ -68,7 +68,7 @@ public class MPCController extends Controller {
 			reptable.add(i+miners.size()-1,new ReputationTableEntry(i+miners.size()-1,min_rep));
 			
 		}
-		reputationhistory = new HashMap<Integer,String>();
+		reputationhistory = new HashMap<Double,String>();
 		System.out.println("________network up_________");
 		
 	}
@@ -164,27 +164,30 @@ private double calculateReputationStep(int helperid) {
 	}
 private void printRepTable() {
 	System.out.println("*********************REPTABLE**********************");
+	String timeEntry = "";
 	for (int i =0; i< reptable.size();i++ ) {
 		System.out.println(reptable.get(i).helperid+"\t"+reptable.get(i).reputation);
-		reputationhistory.put(reptable.get(i).helperid,reputationhistory.get(reptable.get(i).helperid)+"\n"+SimulationClock.getInstance().getTime()+"\t"+reptable.get(i).reputation);
+		timeEntry+= "\t"+reptable.get(i).reputation;
 	}
+	reputationhistory.put(SimulationClock.getInstance().getTime(),timeEntry);
 		
 	}
 private void printRepHistory() {
 	System.out.println("*********************REP History**********************");
-	for (String s : reputationhistory.values()) {
-		System.out.println("\n NEWHELPER\n");
-		System.out.print(s);
+	for (Double d : reputationhistory.keySet()) {
+		System.out.println();
+		System.out.print(d+ reputationhistory.get(d));
 	}
 	}
 public static void main (String[] args) {
-	MPCController mc = new MPCController(30);
+	MPCController mc = new MPCController(20);
+	int nofblocks= 20;
 	mc.startNetwork();
+	for (int i = 0 ; i< nofblocks; i++) {
 	mc.mine();
 	
-	System.out.println("end of block 1");
-	mc.mine();
-	System.out.println("end of block 2");
+	System.out.println("end of block "+i);
+	}
 	mc.printRepHistory();
 }
 
