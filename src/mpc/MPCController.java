@@ -85,6 +85,7 @@ public class MPCController extends Controller {
 		while (!noncefound) {
 			// we are assigning the ranges till the nonce is found 
 			if (miners.get(minerCounter).stayingforthisrange(getIndividualRange())) {
+				
 				miners.get(minerCounter).calcMiningTime(SimulationClock.getInstance().getTime(), getIndividualRange());
 				noncefound = miners.get(minerCounter).getNonceFound();
 				minersqueue.add(miners.get(minerCounter));
@@ -96,7 +97,7 @@ public class MPCController extends Controller {
 			}
 			
 			//advance to the next miner
-			if (minerCounter+1 == miners.size()) {
+			if (minerCounter+1 == miners.size() ) {
 				//all are assigned ranges with no use
 				//advance starting time to keep the correct timing I can't assign another 
 				//range to the helper unless it finishes
@@ -104,8 +105,9 @@ public class MPCController extends Controller {
 				
 				MPCHelper lastremovedfrmqueue = minersqueue.poll();
 				while( minersqueue.size()>0) {
-					lastremovedfrmqueue = minersqueue.poll();
 					System.out.println("hi"+ lastremovedfrmqueue.miningtime);
+					lastremovedfrmqueue = minersqueue.poll();
+					
 				}
 				
 				SimulationClock.getInstance().advanceTime(lastremovedfrmqueue.getonlyMiningTime());
@@ -139,11 +141,12 @@ public class MPCController extends Controller {
 			}
 			//verifying while the ranges are done 
 			//add to verification requests and at %frac assign the verification array and advance the verCounter
-			
-			verifiers.get(verCounter).addverificationrequest(new VerificationRequest(miners.get(minerCounter), (int)getIndividualRange(), (full_rep- reptable.get(minerCounter).reputation)/100)); 
-			verCounter++;
-			if (verCounter% verifiers.size()==0) verCounter=0;
+			if (miners.get(minerCounter).stayingforthisrange(getIndividualRange())) {
 				
+				verifiers.get(verCounter).addverificationrequest(new VerificationRequest(miners.get(minerCounter), (int)getIndividualRange(), (full_rep- reptable.get(minerCounter).reputation)/100)); 
+				verCounter++;
+				if (verCounter% verifiers.size()==0) verCounter=0;
+			}	
 			deb_trials++;
 		}
 		System.out.println("________Finishing time = "+SimulationClock.getInstance().getTime()+"_____" );
@@ -180,8 +183,8 @@ private void printRepHistory() {
 	}
 	}
 public static void main (String[] args) {
-	MPCController mc = new MPCController(20);
-	int nofblocks= 20;
+	MPCController mc = new MPCController(10);
+	int nofblocks= 10;
 	mc.startNetwork();
 	for (int i = 0 ; i< nofblocks; i++) {
 	mc.mine();
